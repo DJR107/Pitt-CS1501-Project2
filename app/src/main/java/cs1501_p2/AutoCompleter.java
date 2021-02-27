@@ -116,7 +116,7 @@ public class AutoCompleter implements AutoComplete_Inter
 		{
 			if (uHStrings.size() >= 5)
 				break;
-			else
+			else if (!uHStrings.contains(s))
 				uHStrings.add(s);
 		}
 		return uHStrings;
