@@ -38,14 +38,15 @@ public class DLB implements Dict
 	 */	
 	public void add(String key)
 	{
+		//System.out.println("\nAdding "+key);
 		if (count == 0)
 		{
+			//System.out.println("Added first word");
 			head = new DLBNode(key.charAt(0));
 			head.setDown(new DLBNode('*'));
 		}
 		else
 		{
-			//System.out.println("\n");
 			DLBNode curr = head;
 			for (int i=0; i<key.length(); i++)
 			{
@@ -89,6 +90,7 @@ public class DLB implements Dict
 					}
 				}
 			}
+			//System.out.println("\nDone Word");
 			curr.setDown(new DLBNode('*'));
 		}
 		count++;
@@ -115,6 +117,7 @@ public class DLB implements Dict
 			{
 				if (curr.getRight() != null)
 				{
+					
 					curr = curr.getRight();
 					i--;
 				}
@@ -142,23 +145,36 @@ public class DLB implements Dict
 
 		for (int i=0; i<pre.length(); i++)
 		{
+			//System.out.println("\nComparing curr: "+curr.getLet()+" with char: "+pre.charAt(i)+" at index: "+i);
 			if (curr.getLet() == pre.charAt(i))
 			{
+				//System.out.println("Down");
 				curr = curr.getDown();
-				if (i == pre.length()-1 && curr.getRight() != null)
-					return true;
+				if (i == pre.length()-1 && curr != null)
+				{
+					if (curr.getLet() != '*' || (curr.getLet() == '*' && curr.getRight() != null))
+					{
+						//System.out.println("Found it done");
+						return true;
+					}
+				}
 			}
 			else
 			{
 				if (curr.getRight() != null)
 				{
+					//System.out.println("Right");
 					curr = curr.getRight();
 					i--;
 				}
 				else
+				{
+					//System.out.println("Not Found1");
 					return false;
+				}
 			}
 		}
+		//System.out.println("Not Found2");
 		return false;
 	}
 
@@ -181,23 +197,28 @@ public class DLB implements Dict
 
 		for (int i=0; i<searchByCharArr.size(); i++)
 		{
+			//System.out.println("Current node: "+curr.getLet()+" Current char: "+searchByCharArr.get(i)+" w/ index: "+i+" and size: "+searchByCharArr.size());
 			if (curr.getLet() == searchByCharArr.get(i))
 			{
+				//System.out.println("Equals");
 				curr = curr.getDown();
-				if (i == searchByCharArr.size()-1)
+				if (i == (searchByCharArr.size()-1))
 				{
-					if (curr.getLet() != '*' && curr.getRight() != null)
+					if (curr.getLet() != '*')
 						return 0;
 					else if (curr.getLet() == '*' && curr.getRight() == null)
 						return 1;
 					else if (curr.getLet() == '*' && curr.getRight() != null)
 						return 2;
 				}
+				//System.out.println("Not end yet");
 			}
 			else
 			{
+				//System.out.println("Does not equal");
 				if (curr.getRight() != null)
 				{
+					//System.out.println("Going right");
 					curr = curr.getRight();
 					i--;
 				}
@@ -255,14 +276,12 @@ public class DLB implements Dict
 			strings.add(pre.toString());
 			//System.out.println("Added: "+pre.toString());
 		}
+
 		StringBuilder pre2 = pre;
-		while (strings.size() < 5 && curr.getRight() != null)
-		{
-			if (curr.getLet() == '*')
-				curr = curr.getRight();
-			//System.out.println("Call");
-			suggestRec(curr, pre2, strings);
-		}
+		if (curr.getLet() == '*')
+			curr = curr.getRight();
+		//System.out.println("Call");
+		suggestRec(curr, pre2, strings);
 
 		return strings;
 	}

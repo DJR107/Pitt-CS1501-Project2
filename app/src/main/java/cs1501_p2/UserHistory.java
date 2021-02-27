@@ -38,6 +38,7 @@ public class UserHistory implements Dict
 	 */	
 	public void add(String key)
 	{
+		//System.out.println("\nAdding: "+key);
 		DLBNode curr = head;
 		for (int i=0; i<key.length(); i++)
 		{
@@ -61,18 +62,27 @@ public class UserHistory implements Dict
 				}
 				else
 				{
-					try
+					if (i == key.length()-1)
 					{
-						int occurence = Integer.parseInt(String.valueOf(curr.getDown().getLet()));
-						occurence++;
-						//System.out.println("Word Already Here, Incrementing Occurence: "+occurence);
-						curr.setDown(new DLBNode(Character.forDigit(occurence, 10)));
-						//System.out.println("New Down: "+curr.getDown().getLet());
+						try
+						{
+							int occurence = Integer.parseInt(String.valueOf(curr.getDown().getLet()));
+							occurence++;
+							//System.out.println("\nWord Already Here, Incrementing Occurence: "+occurence);
+							curr.setDown(new DLBNode(Character.forDigit(occurence, 10)));
+							//System.out.println("New Down: "+curr.getDown().getLet());
+						}
+						catch (Exception e)
+						{
+							//System.out.println(" w/ node: "+curr.getDown().getLet());
+							//System.out.println("Looking down1");
+							curr = curr.getDown();
+						}
 					}
-					catch (Exception e)
+					else
 					{
 						//System.out.println(" w/ node: "+curr.getDown().getLet());
-						//System.out.println("Looking down");
+						//System.out.println("Looking down2");
 						curr = curr.getDown();
 					}
 				}
@@ -101,9 +111,8 @@ public class UserHistory implements Dict
 		{
 			//System.out.println("\nNew Word");
 			curr.setDown(new DLBNode('1'));
+			count++;
 		}
-
-		count++;
 	}
 
 	/**
@@ -293,7 +302,27 @@ public class UserHistory implements Dict
 			curr = curr.getRight();
 		}
 
-		return strings;
+		ArrayList<String> strings2 = new ArrayList<String>();
+
+		while (strings.size() > 0)
+		{
+			//System.out.println("String: "+strings.get(0));
+			StringBuilder maybeString = new StringBuilder(strings.get(0));
+			int occurence = Integer.parseInt(String.valueOf(strings.get(0).charAt(strings.get(0).length()-1)));
+			for (String s : strings)
+			{
+				int occurence1 = Integer.parseInt(String.valueOf(s.charAt(s.length()-1)));
+				//System.out.println("Occurence1: "+occurence1);
+				if (occurence1 > occurence)
+					maybeString = new StringBuilder(s);
+			}
+			//System.out.println("MaybeString: "+maybeString);
+			strings.remove(maybeString.toString());
+			maybeString.deleteCharAt(maybeString.length()-1);
+			strings2.add(maybeString.toString());
+		}
+
+		return strings2;
 	}
 
 	/**
@@ -312,17 +341,25 @@ public class UserHistory implements Dict
 		{
 			boolean dontAdd = false;
 			//System.out.println("Current charArr: "+charArr.toString());
+			charArr.append(curr.getLet());
 			try
 			{
 				int occurence = Integer.parseInt(String.valueOf(curr.getLet()));
-				//System.out.println("Added: "+charArr.toString());
-				strings.add(charArr.toString());
-				charArr.deleteCharAt(charArr.length()-1);			
+				if (!strings.contains(charArr.toString()) && !dontAdd)
+				{
+					//System.out.println("Added: "+charArr.toString());
+					strings.add(charArr.toString());
+					charArr.deleteCharAt(charArr.length()-1);
+				}
+				else
+				{
+					charArr.deleteCharAt(charArr.length()-1);
+					//System.out.println("Not Added");	
+				}	
 			}
 			catch (Exception e)
 			{
 				//System.out.println("Call1");
-				charArr.append(curr.getLet());
 				suggestRec(curr.getDown(), charArr, strings);
 				charArr.deleteCharAt(charArr.length()-1);
 				dontAdd = true;
@@ -367,13 +404,23 @@ public class UserHistory implements Dict
 	{
 		boolean dontAdd = false;
 		//System.out.println("Current charArr: "+charArr.toString());
+		//System.out.println("Current node: "+curr.getLet());
 		charArr.append(curr.getLet());
 		try
 		{
 			int occurence = Integer.parseInt(String.valueOf(curr.getLet()));
-			//System.out.println("Added: "+charArr.toString());
-			strings.add(charArr.toString());
-			charArr.deleteCharAt(charArr.length()-1);			
+			//System.out.println("Valid Word");
+			if (!strings.contains(charArr.toString()) && !dontAdd)
+			{
+				//System.out.println("Added: "+charArr.toString());
+				strings.add(charArr.toString());
+				charArr.deleteCharAt(charArr.length()-1);
+			}
+			else
+			{
+				charArr.deleteCharAt(charArr.length()-1);
+				//System.out.println("Not Added");	
+			}
 		}
 		catch (Exception e)
 		{
