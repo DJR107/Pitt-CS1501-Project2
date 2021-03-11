@@ -24,11 +24,17 @@ public class UserHistory implements Dict
 	 */
 	private ArrayList<Character> searchByCharArr;
 
+	/**
+	 * Int that results from searchByChar(), used in suggest()
+	 */
+	private int searchByCharInt;
+
 	public UserHistory()
 	{
 		head = null;
 		count = 0;
 		searchByCharArr = new ArrayList<Character>();
+		searchByCharInt = 0;
 	}
 
 	/**
@@ -207,37 +213,43 @@ public class UserHistory implements Dict
 
 		for (int i=0; i<searchByCharArr.size(); i++)
 		{
+			//System.out.println("Current node: "+curr.getLet()+" Current char: "+searchByCharArr.get(i)+" w/ index: "+i+" and size: "+searchByCharArr.size());
 			if (curr.getLet() == searchByCharArr.get(i))
 			{
+				//System.out.println("Equals");
 				curr = curr.getDown();
 				if (i == searchByCharArr.size()-1)
 				{
+					//System.out.println("End charArr");
 					try
 					{
 						int occurence = Integer.parseInt(String.valueOf(curr.getLet()));
-						if (curr.getRight() != null)
-							return 2;
-						else
+						if (curr.getRight() == null)
+							return 1;
+						else if (curr.getRight() != null)
 							return 1;
 					}
 					catch (Exception e)
 					{
-						if (curr.getRight() != null)
-							return 0;
+						return 0;
 					}
 				}
 			}
 			else
 			{
+				//System.out.println("Does not equal");
 				if (curr.getRight() != null)
 				{
+					//System.out.println("Going right");
 					curr = curr.getRight();
 					i--;
 				}
 				else
 					return -1;
 			}
+			//System.out.println("End loop");
 		}
+		//System.out.println("Returned -1");
 		return -1;
 	}
 
@@ -266,6 +278,9 @@ public class UserHistory implements Dict
 		//System.out.println("uH pre: "+pre.toString());
 
 		ArrayList<String> strings = new ArrayList<String>();
+		//System.out.println("searchByCharInt = "+searchByCharInt);
+		if (searchByCharInt < 0)
+			return strings;
 
 		DLBNode curr = head;
 		for (int i=0; i<searchByCharArr.size(); i++)
@@ -447,5 +462,13 @@ public class UserHistory implements Dict
 	public int count()
 	{
 		return count;
+	}
+
+	/**
+	 * Sets searchByCharInt to i
+	 */
+	public void setSearchByCharInt(int i)
+	{
+		searchByCharInt = i;
 	}
 }

@@ -24,11 +24,17 @@ public class DLB implements Dict
 	 */
 	private ArrayList<Character> searchByCharArr;
 
+	/**
+	 * Int that results from searchByChar(), used in suggest()
+	 */
+	private int searchByCharInt;
+
 	public DLB()
 	{
 		head = null;
 		count = 0;
 		searchByCharArr = new ArrayList<Character>();
+		searchByCharInt = 0;
 	}
 
 	/**
@@ -253,6 +259,9 @@ public class DLB implements Dict
 		}
 
 		ArrayList<String> strings = new ArrayList<String>();
+		//System.out.println("searchByCharInt = "+searchByCharInt);
+		if (searchByCharInt < 0)
+			return strings;
 
 		DLBNode curr = head;
 		for (int i=0; i<searchByCharArr.size(); i++)
@@ -280,8 +289,11 @@ public class DLB implements Dict
 		StringBuilder pre2 = pre;
 		if (curr.getLet() == '*')
 			curr = curr.getRight();
-		//System.out.println("Call");
-		suggestRec(curr, pre2, strings);
+		if (curr != null)
+		{
+			//System.out.println("Call");
+			suggestRec(curr, pre2, strings);
+		}
 
 		return strings;
 	}
@@ -302,6 +314,7 @@ public class DLB implements Dict
 		{
 			boolean dontAdd = false;
 			//System.out.println("Current charArr: "+charArr.toString());
+			//System.out.println("Current node: "+curr.getLet());
 			if (curr.getLet() != '*')
 			{
 				charArr.append(curr.getLet());
@@ -399,5 +412,13 @@ public class DLB implements Dict
 	public int count()
 	{
 		return count;
+	}
+
+	/**
+	 * Sets searchByCharInt to i
+	 */
+	public void setSearchByCharInt(int i)
+	{
+		searchByCharInt = i;
 	}
 }

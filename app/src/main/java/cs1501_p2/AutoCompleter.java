@@ -105,11 +105,11 @@ public class AutoCompleter implements AutoComplete_Inter
 
 		if (uH.count() > 0)
 		{
-			int hmm = uH.searchByChar(next);
+			uH.setSearchByCharInt(uH.searchByChar(next));
 			uHStrings = uH.suggest();
 		}
 
-		int hmmm = dlb.searchByChar(next);
+		dlb.setSearchByCharInt(dlb.searchByChar(next));
 		ArrayList<String> dlbStrings = dlb.suggest();
 
 		for (String s : dlbStrings)
